@@ -17,6 +17,38 @@ mongoose.connect(process.env.MONGO_URL,{
     console.log('connected with mongodatabase')
 });
 
+app.post('/getEmployees',async(req,res)=>{
+    const employee= await employeeModel.find({})
+    console.log(employee)
+    res.json({result:employee})
+})
+
+app.post('/addEmployee',async(req,res)=>{
+  try{  
+    console.log(req.body)
+    const employee= new employeeModel(req.body)
+    await employee.save();
+    res.json({success:true})
+}catch(e){
+    console.log(e)
+}
+})
+
+app.post('/editEmployee',async(req,res)=>{
+try{
+    const data=req.body.data
+    console.log(data.name)
+const id=req.body.id
+console.log(id)
+const employee =await employeeModel.findByIdAndUpdate(id,data)
+await employee.save();
+// console.log(employee)
+res.json(employee)
+}
+catch(e){
+    console.log(e)
+}
+})
 
 app.listen(4000,()=>{
     console.log('running on 4000')
