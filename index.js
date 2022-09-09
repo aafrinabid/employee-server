@@ -4,7 +4,8 @@ const {v4:uuidv4}=require('uuid');
 const mongoose=require('mongoose');
 const cors= require('cors')
 const app=express()
-const employeeModel = require('./models/employeeModel')
+const employeeModel = require('./models/employeeModel');
+const { findByIdAndDelete } = require('./models/employeeModel');
 
 
 app.use(cors())
@@ -18,7 +19,7 @@ mongoose.connect(process.env.MONGO_URL,{
 });
 
 app.post('/getEmployees',async(req,res)=>{
-    const employee= await employeeModel.find({})
+    const employee= await employeeModel.find({}).sort({name:1})
     console.log(employee)
     res.json({result:employee})
 })
@@ -48,6 +49,18 @@ res.json(employee)
 catch(e){
     console.log(e)
 }
+})
+
+app.post('/deleteEmployee',async(req,res)=>{
+    try{
+        console.log(req.body)
+        const id=req.body.id
+        const employee= await employeeModel.findByIdAndDelete(id)
+        res.json(true)
+
+    }catch(e){
+        console.log(e)
+    }
 })
 
 app.listen(4000,()=>{
